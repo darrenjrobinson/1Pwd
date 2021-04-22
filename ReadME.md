@@ -7,6 +7,8 @@ PowerShell Module for [1Password CLI](https://app-updates.agilebits.com/product_
 ## Description
 A PowerShell Module enabling simple methods for accessing your 1Password Vault. 
 
+[Associated Blogpost](https://blog.darrenjrobinson.com/using-1password-with-powershell/)
+
 ## Features
 - Allows a configuration to be securely stored in your local Windows Profile that automatically loads with the module.
 - Stores a profile configuration using Export-CliXML. The Export-Clixml cmdlet encrypts credential objects by using the Windows Data Protection API. The encryption ensures that only your user account on only that computer can decrypt the contents of the credential object. The exported CLIXML file can't be used on a different computer or by a different user.
