@@ -24,7 +24,7 @@ Install-Module -name 1Pwd
 
 ## Prerequsites 
 To use this module you will need:
-- A Paide [1Password account] (https://1password.com/sign-up/)
+- A paid [1Password account](https://1password.com/sign-up/)
 - [Your Secret Key or Setup Code](https://support.1password.com/secret-key/)
 - Your Master Password that you use for accessing your 1Password Vault
 - [1Password CLI](https://support.1password.com/command-line/). Install it in your system path or in the same directory as the scripts you'll be running that will use this 1Pwd PowerShell Module.
