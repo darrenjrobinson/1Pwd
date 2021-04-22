@@ -74,7 +74,7 @@ Having successfully provided and validated your credentials the Set-1PasswordCon
 Set-1PasswordConfiguration -Vault $account.domain -SignInAddress $1PSignInAddress -SignInAccount $1PSignInAccount -SecretKey $1PSecretKey -MasterPassword $1PMasterPassword -Default
 ```
 
-- ### Switch-1PasswordConfiguration
+### Switch-1PasswordConfiguration
 The Switch-1PasswordConfiguration cmdlet allows you to switch vaults/configuration. This is useful if you have multiple accounts. Each configuration needs to be saved  using Set-1PasswordConfiguration. When saving a configuration you can use the -default switch with Set-1PasswordConfiguration to specify which is the default configuration that will be loaded when the module loads. 
 
 To change to the configuration for PersonalVault2 you would use the command.
