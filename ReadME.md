@@ -20,7 +20,7 @@ A PowerShell Module enabling simple methods for accessing your 1Password Vault.
 ## Installation
 Install from the PowerShell Gallery on Windows PowerShell 5.1+ or PowerShell Core 6.x or PowerShell.
 
-```
+```powershell 
 Install-Module -name 1Pwd
 ```
 
@@ -32,13 +32,13 @@ To use this module you will need:
 - [1Password CLI](https://support.1password.com/command-line/). Install it in your system path or in the same directory as the scripts you'll be running that will use this 1Pwd PowerShell Module.
 
 Test the 1Password CLI is accessible by running the following command that will return the 1Password CLI version. If you haven't setup credentials yet you will also receive a message to that effect. 
-```
+```powershell 
     Invoke-1PasswordExpression "--version"
 ```
 
 ## Cmdlets
 The module contains 4 cmdlets. 
-```
+```powershell 
 Get-Command -Module 1Pwd | Sort-Object Name | Get-Help | Format-Table Name, Synopsis -Autosize | clip
 
 Name                          Synopsis
@@ -55,7 +55,7 @@ To create a secure profile for use with the 1Pwd Module execute the following Po
 ### Set Credentials and Profile Info
 Update the following with your Sign-In Address and Sign In Account (Email Address) retrieved above. You will be prompted to securely input your Secret Key and Master Password. 
 
-```
+```powershell 
 $1PSignInAddress = "https://my.1password.com"
 $1PSignInAccount = "your@emailaddress.com"
 $1PSecretKey = Read-Host "Enter your 1Password SecretKey" -AsSecureString
@@ -65,14 +65,14 @@ $1PMasterPassword = Read-Host "Enter your 1Password Master Password" -AsSecureSt
 ### Get 1Password Account Details
 Using the information input above the Test-1PasswordCredentials cmdlet is used to validate them and return your account details. 
 
-```
+```powershell 
 $account = Test-1PasswordCredentials -SignInAddress $1PSignInAddress -SignInAccount $1PSignInAccount -SecretKey $1PSecretKey -MasterPassword $1PMasterPassword
 ```
 
 ### Save 1Pwd Configuration
 Having successfully provided and validated your credentials the Set-1PasswordConfiguration cmdlet will securely store the configuration in the logged in users local Windows Profile. When saving a configuration you can use the -default switch to specify that it is the default configuration. It will automatically be retrieved and a session created when the module loads.
 
-```
+```powershell 
 Set-1PasswordConfiguration -Vault $account.domain -SignInAddress $1PSignInAddress -SignInAccount $1PSignInAccount -SecretKey $1PSecretKey -MasterPassword $1PMasterPassword -Default
 ```
 
@@ -81,13 +81,13 @@ The Switch-1PasswordConfiguration cmdlet allows you to switch vaults/configurati
 
 To change to the configuration for PersonalVault2 you would use the command.
 
-```
+```powershell 
 Switch-1PasswordConfiguration -vault PersonalVault2
 ```
 
 To switch to the PersonalVault2 configuration and make it the default use the -default switch. 
 
-```
+```powershell 
 Switch-1PasswordConfiguration -vault PersonalVault2 -Default
 ```
 
@@ -101,25 +101,49 @@ Invokes 1Password CLI command.
 
 There is NO NEED to specify the op.exe executable or the --session --cache switches.
 
-Example: List Vaults
-```
+Example: **List Vaults**
+```powershell 
 Invoke-1PasswordExpression "list vaults"
 ```
 
-Example: Get Item Twitter
-```
+Example: **Get Item** Twitter
+```powershell 
 Invoke-1PasswordExpression "get item Twitter"
 ```
 
-Example: Get Item 'Twitter Other Account'
+Example: **Get Item** 'Twitter Other Account'
 e.g An Item with spaces
-```
+```powershell 
 Invoke-1PasswordExpression "get item 'Twitter - darrenjrobinson'"
 ```
 
-Example: Get the Twitter Vault Item and return the password
-```
+Example: **Get** the Twitter Vault **Item and return the password**
+```powershell 
 ((Invoke-1PasswordExpression "get item 'Twitter - darrenjrobinson'").details.fields | where-object {$_.designation -eq 'password'} | select-object -property value).value
+```
+
+Example: **Get an Item** and **update it** with a **new user specified password**
+```powershell 
+# Get Vault Entry
+$1PwdItem = Invoke-1PasswordExpression "get item '1PWD Module Update Test'"
+
+# Update the Item with new password 'mynewpassword'
+Invoke-1PasswordExpress "edit item $($1PwdItem.uuid) password=mynewpassword"
+```
+
+Example: **Get an Item** and **update it with a new 1Password generated password** and then **retrieve** it (and the old one automatically updated into **passwordHistory**)
+```powershell 
+# Get Vault Entry
+$1PwdItem = Invoke-1PasswordExpression "get item '1PWD Module Update Test'"
+# Update by getting 1Password to generate a 32-character password made up of letters, numbers, and symbols
+Invoke-1PasswordExpress "edit item $($1PwdItem.uuid) password --generate-password"
+
+# Get Item
+$updatedItem = Invoke-1PasswordExpress "get item $($1PwdItem.uuid)"
+# Get New Password
+$updatedItem.details.fields | where-object {$_.designation -eq 'password'} | select-object 
+# Get Old Passwords
+$updatedItem.details.passwordHistory 
 ```
 
 ## Also See
