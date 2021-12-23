@@ -128,7 +128,7 @@ Example: **Get an Item** and **update it** with a **new user specified password*
 $1PwdItem = Invoke-1PasswordExpression "get item '1PWD Module Update Test'"
 
 # Update the Item with new password 'mynewpassword'
-Invoke-1PasswordExpress "edit item $($1PwdItem.uuid) password=mynewpassword"
+Invoke-1PasswordExpression "edit item $($1PwdItem.uuid) password=mynewpassword"
 ```
 
 Example: **Get an Item** and **update it with a new 1Password generated password** and then **retrieve** it (and the old one automatically updated into **passwordHistory**)
@@ -136,10 +136,10 @@ Example: **Get an Item** and **update it with a new 1Password generated password
 # Get Vault Entry
 $1PwdItem = Invoke-1PasswordExpression "get item '1PWD Module Update Test'"
 # Update by getting 1Password to generate a 32-character password made up of letters, numbers, and symbols
-Invoke-1PasswordExpress "edit item $($1PwdItem.uuid) password --generate-password"
+Invoke-1PasswordExpress "edit item $($1PwdItem.uuid) --generate-password"
 
 # Get Item
-$updatedItem = Invoke-1PasswordExpress "get item $($1PwdItem.uuid)"
+$updatedItem = Invoke-1PasswordExpression "get item $($1PwdItem.uuid)"
 # Get New Password
 $updatedItem.details.fields | where-object {$_.designation -eq 'password'} | select-object 
 # Get Old Passwords
