@@ -136,7 +136,7 @@ Example: **Get an Item** and **update it with a new 1Password generated password
 # Get Vault Entry
 $1PwdItem = Invoke-1PasswordExpression "get item '1PWD Module Update Test'"
 # Update by getting 1Password to generate a 32-character password made up of letters, numbers, and symbols
-Invoke-1PasswordExpress "edit item $($1PwdItem.uuid) --generate-password"
+Invoke-1PasswordExpression "edit item $($1PwdItem.uuid) --generate-password"
 
 # Get Item
 $updatedItem = Invoke-1PasswordExpression "get item $($1PwdItem.uuid)"
