@@ -221,7 +221,7 @@ The 1Password User's Master Password
             "1" {
                 $Global:sessionToken = write-output $1PMasterPasswordDecrypted | .\op.exe signin $SignInAddress $SignInAccount $1PSecretKeyDecrypted -r 
                 if ($sessionToken) {
-                    return (Invoke-Expression -command "'.\op.exe get account --cache --session $($sessionToken)'" ) 
+                    return (.\op.exe get account --cache --session $($sessionToken) | ConvertFrom-Json) 
                 }
             }
             "2" {
@@ -229,7 +229,7 @@ The 1Password User's Master Password
                 try {
                     $accountList = $null 
                     $accountList = (.\op.exe account list)
-                    if ($accountList.count -gt 1) {
+                    if ($accountList.count -ge 1) {
                         # sign in 
                         $Global:sessionToken = write-output $1PMasterPasswordDecrypted | .\op.exe signin --raw 
                         if ($sessionToken) {
@@ -419,8 +419,8 @@ else {
 # SIG # Begin signature block
 # MIIoKQYJKoZIhvcNAQcCoIIoGjCCKBYCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCBXRjgJLTcTPVqq
-# Lf/T0XajAZUga+KI35QlPNTUn0jov6CCISwwggWNMIIEdaADAgECAhAOmxiO+dAt
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDWg2Ny1M1CIYZR
+# VspxSJZA/sICpCVQ//n1cVWGjD4t86CCISwwggWNMIIEdaADAgECAhAOmxiO+dAt
 # 5+/bUOIIQBhaMA0GCSqGSIb3DQEBDAUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yMjA4MDEwMDAwMDBa
@@ -602,34 +602,34 @@ else {
 # cnVzdGVkIEc0IENvZGUgU2lnbmluZyBSU0E0MDk2IFNIQTM4NCAyMDIxIENBMQIQ
 # CcjsXDR9ByBZzKg16Kdv+DANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEM
 # MQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQB
-# gjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDLlyJjMGVGMA/e
-# EusTLH/waXYOBZAynIFlsHJ9QSEJ0zANBgkqhkiG9w0BAQEFAASCAgC0HdM3LfDi
-# Y0CZiEILzqgCd7rE42w2Bo0VuWKxE0TPVEUIeJFLh6KJBTHkxYAYz/TttnIwhERr
-# htU2qQk+4gHrHs43S8d2AaOt8bIMCL3Icxuro0Is+EL/BGctq4uU+8MmfxTYDwKZ
-# GptVyWeuPYofBStJhgonrRer5FGBXTC38nSO5SkwmryoU8l/Pie1tDEjlGf0M1hg
-# WE8Wg5i3uht7lGShUbARJQguoJQSCv2QSBICYujpF3r8JYARqSLjUEOFWu+/sq8D
-# +PfWff6feH/eNhBDjPDrCgEBqec8iGD/9KtHWkytpNxfYG3XzPRC8/sT7a12K36J
-# ZqiIeBGW5g9o7U9BAFemXb/0RxUW1MGg6MVnDaF6pINEPMig3Xaf0L0O7Uw0mdmg
-# 2+Itpdseju6GYwfgHFPE/ZU1EAOW2xzpCihhyeE4szsEN2qP/63gtfggZVmebYcU
-# ILIF0ngnRjmh04kD86reUUXHJTO7QDPXMFvkm41eHtV8DX1reEwoCQvssqduX0Ga
-# ijh7MSZLjCiyeeF4/y1C2B2MuYFBtzd6lAzHlpH1jbtNh8b8vtAwgdZ7n/V6YxR8
-# ql6+XxssmGrHsXyOpqsWkVAjQLCT9YnN88TyeCdtuvV007mXSos84oZO5dTnl8t8
-# EzUgNDdlUwBHbHbSiFewa7gRq+bkRbfXkqGCAyAwggMcBgkqhkiG9w0BCQYxggMN
+# gjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDI7pVvR4EtGSli
+# TFGnhxGU8fwnw77PLc6XO5MQQ5jd+zANBgkqhkiG9w0BAQEFAASCAgCXqXLqqiNI
+# /e0Gpxjr8kgD7GdLg6V49vjzVcH+QDbBvJFKwFmWFgvyfC4Fm7g7lSP6TTVuk8Dr
+# 0mn0V8FYPZwOXqi98czopJSXnosICBRCkXYuXnH1SQycCchDnbYEKyNpyP6xeyzE
+# q7cVSHiFPOhm3g6UmDIDPwbwtzq9FES57yZmGt1PwPh9qT1DvBEG9mUx+H6ELxUK
+# C7fLDDN7h/zCV6S0YA5ci/K0AArrvsDaeacUgDfpyV1BySjSuC7vzX/W1bdLxbIt
+# zUltvJdnwL5gQBrmgFwHcCKi9j+gGYEw3ftC5wUAg3iiQhOurC43AVu2yIfReC8s
+# dCfOqXGlvW9aObftoRchVwZy8qp4lXCkXgJDTbropG5TWK86PSuCcle9XeDi11QH
+# EdTcW8cUQX+YfKUXFp71CfzNz4kCjNnQhRerYLdY/fT9kjLG5z9uEBWiHAcLtTRI
+# 2L9fE8fTfs1K6fNj6rulFvxJA7gxAtNJONbFX3zur77NzchUrg72SIBlh6TKUklm
+# hllbI7NOe388DvqPFrKxjlTins4StcOPAlES9S2p7+tS3xQcP1nOsft+MFrgYajP
+# lD4PbNdf+gbR3QvziVr8kaGJwcHuyNVOOc/E5kwFHKqFFUbAZBIBybr0rRVRb+Ps
+# 5DIxpw6nlolqVe+VESnxhOtc+Nu/2Djqw6GCAyAwggMcBgkqhkiG9w0BCQYxggMN
 # MIIDCQIBATB3MGMxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2VydCwgSW5j
 # LjE7MDkGA1UEAxMyRGlnaUNlcnQgVHJ1c3RlZCBHNCBSU0E0MDk2IFNIQTI1NiBU
 # aW1lU3RhbXBpbmcgQ0ECEAxNaXJLlPo8Kko9KQeAPVowDQYJYIZIAWUDBAIBBQCg
-# aTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMzA2
-# MjkyMTA0MTlaMC8GCSqGSIb3DQEJBDEiBCAThHaOyyHk22+3WyR6CQFLLnD/eHxi
-# 8KZWZrXBJZY5xzANBgkqhkiG9w0BAQEFAASCAgAeoAo/clPU0HncWr3FobEexzxv
-# 9egi1FSsvrPqd/Pp5VqklfeRQMYm8gnsPBBipW7QsWlyfLPPZlXR1ueeI/7acNSz
-# iOVCMu+9YWSY8NeDmu/8z2P99ZEDMbISbAwGa1OsmbhxlTEuFW5zXDyMIjNx50p1
-# gd8I7ks1362FgYMqwjvIgUNVdLCt0qpR73A95qoo0piwFWDuI8S/h0bEWISmGyk6
-# iahAfRzYI8y4DTwEqjZlZZU5CNueDc435psMY89zCN72Sm6OVUDF8vSYo8BQfGN1
-# isykdgGMkttjrXfa3lOTZ5/vLEsXsHSP933kSEeal4Dum5kzFJJTzcTROsPtKHoL
-# M8e4RsQofhCtIGsbkaUAVz6MjWX9Od/Y5luaplgRzkRTg4T1JG8jqjf933KsCNsN
-# LAN5Jncj7jmEfeFl8IpEAEWVta6p1k2ObQfhK2+pTxtsHjr+4jWK6ibF/ij4IWpF
-# Ce6N/mkFzTrRh2tMoDJBa+PdOpWM/bFjtltAgaYPl1Fn4wq+uo5Ix4hc240IREzd
-# OZk+ktvF6qpd0u7lHjFTe1BerhZ7NPESHicqmxnkOS47ENzCktm3GLy9Cl+7pP3a
-# OHfGJqBAKI5fvQr+sh34+CGMy7PNPQDVo2j2J4J7PZ4PWYoqalh7FjMGsGCPtzU1
-# YyCF47OvVi5MQZGuYA==
+# aTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMzA3
+# MjUwODE0MTRaMC8GCSqGSIb3DQEJBDEiBCCvO3nLQmrOVdDgwqppbgGg7Kx4AKDB
+# 6+XF+dVWhuq0nDANBgkqhkiG9w0BAQEFAASCAgBbvXqQYPH8eboQ8vUOfvH7nFfP
+# MuuFavDrRygn/20qt4fdlZd5szQJOFdlwB3MnAgxYYlMy9nVDmNGYZlwKECrLCSA
+# hM2UpY5ZVKLvY+olOpP1pWo2Nclwi0ANM7DYpC7StSMkiDTaWf86iAlD2gLPZL2E
+# jGS7P0oAYvk9YEov9Pp+PxfdDkElOYUCk6ryWDx7wcpPoByGk30iw+n5HygUqQBc
+# KxecYaDf1HYX0jQ2mzfSRKp7zJkae0wXNkymV57R+Q5q8IOLJREndUFRYHbvHmH3
+# nqgNpCmvE/ziOXO3ho3cSIzAPeOin1H/+bW8Jb1/gQP+JYJLWUqTss38vh1Xeby/
+# EQU1Q5j5oFDFJLazvXDXSVryg5s+wewoPXRFd+Y7Ngl4IVgwXqh4F8ioOeHKQKmd
+# SZQUboXaSIuLgfxx+PblOTQyF1D995d5X8R3eSlZnAT8FWV5GzFbl8YEl91AmqKw
+# 8jpfaFreLgwK3Yn1BJAS26ZDmorwBbkSFZaMXXHOSkp3L1XKoSWgrLIDXxgMWSKf
+# XokLnRy+hLHy3EcD0UvZeIkH8E8eAqAEmswse94YUuiqQX3+0IxcOD3HVGxn0rOQ
+# xtFRfIrD2VvsU5kemA8aHo6rbocdwnIrP4QTL6lzTzWrWcvbsmuVPwCYjV1Tx4pd
+# vRmxN9reS8ZT9RDz+Q==
 # SIG # End signature block

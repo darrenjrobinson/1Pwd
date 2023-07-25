@@ -41,7 +41,7 @@ To use this module you will need:
 
 Test the 1Password CLI is accessible by running the following command that will return the 1Password CLI version. If you haven't setup credentials yet you will also receive a message to that effect. 
 ```
-    Invoke-1PasswordExpression "--version"
+    .\op.exe --version
 ```
 
 ## Cmdlets
