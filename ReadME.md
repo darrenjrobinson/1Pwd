@@ -24,6 +24,7 @@ v2 of this module has been on the backlog for sometime. The [1Password](https://
 - You can use the module in Demo's and Presentations and not expose your API Keys or Credentials.
 - Works in Jupyter Notebook
 - Works with Windows PowerShell and PowerShell (6.x+)
+- Works on Windows, macOS and Linux (PowerShell 7+ on macOS/Linux). See the configuration note below about how credentials are stored on macOS/Linux.
 
 ## Installation
 Install from the PowerShell Gallery on Windows PowerShell 5.1+ or PowerShell Core 6.x or PowerShell.
@@ -37,12 +38,29 @@ To use this module you will need:
 - A Paid [1Password account] (https://1password.com/sign-up/)
 - [Your Secret Key or Setup Code](https://support.1password.com/secret-key/)
 - Your Master Password that you use for accessing your 1Password Vault
-- [1Password CLI](https://app-updates.agilebits.com/product_history/CLI2). Install it in the same directory as your script(s).  
+- [1Password CLI](https://developer.1password.com/docs/cli/get-started/) installed
 
-Test the 1Password CLI is accessible by running the following command that will return the 1Password CLI version. If you haven't setup credentials yet you will also receive a message to that effect. 
+### Installing the 1Password CLI
+| Platform | Install |
+|---|---|
+| Windows | `winget install AgileBits.1Password.CLI` or the [manual install](https://developer.1password.com/docs/cli/get-started/) to `C:\Program Files\1Password CLI` |
+| macOS | `brew install 1password-cli` |
+| Linux | The apt / dnf / yum repository from the [1Password CLI docs](https://developer.1password.com/docs/cli/get-started/) |
+
+When the module loads it looks for the 1Password CLI (`op.exe` on Windows, `op` on macOS/Linux) in the following order and uses the first one found:
+1. The full path in the `OP_CLI_PATH` environment variable (e.g. `$env:OP_CLI_PATH = 'D:\Tools\op.exe'` before `Import-Module 1Pwd`)
+2. The current directory (the original v1/v2.0 behaviour of putting `op.exe` alongside your scripts still works)
+3. Your `PATH`
+4. The default install locations: `C:\Program Files\1Password CLI\op.exe` (Windows), `/opt/homebrew/bin/op` and `/usr/local/bin/op` (macOS), `/usr/local/bin/op` and `/usr/bin/op` (Linux)
+
+Test the 1Password CLI is accessible by running the following command that will return the 1Password CLI version. 
 ```
-    .\op.exe --version
+    op --version
 ```
+
+Run `Import-Module 1Pwd -Verbose` to see which CLI the module found.
+
+**Note:** From v2.1.0 the module is no longer code signed. If your execution policy is `AllSigned` you will need to adjust it to load the module.
 
 ## Cmdlets
 The module contains 4 cmdlets. 
@@ -61,6 +79,8 @@ Test-1PasswordCredentials     Tests if the configured 1Password CLI configuratio
 
 ## Configuration 
 To create a secure profile for use with the 1Pwd Module execute the following PowerShell commands with the user account on the computer that you will be using to retrieve/set 1Password Vault items. This will create the secure configuration under your Windows Profile for the logged in user on computer it was executed on. It can only be opened and the Secret Key and Master Password read using the same account on the same computer. 
+
+**macOS / Linux:** the configuration is saved to `~/.local/share/1PasswordConfiguration.clixml`. The Windows Data Protection API isn't available on these platforms, so `Export-Clixml` does **not** encrypt the Secret Key and Master Password. The module restricts the file to your user account (`chmod 600`), but anyone with root or access to your user account can read it. Consider this before saving a configuration on a shared machine.
 
 ### Set Credentials and Profile Info
 Update the following with your Sign-In Address and Sign In Account (Email Address) retrieved above. You will be prompted to securely input your Secret Key and Master Password. 
@@ -132,7 +152,7 @@ Invoke-1PasswordExpression "list users"
 Invoke-1PasswordExpression "user list"
 ```
 
-There is NO NEED to specify the op.exe executable or the --session --cache switches.
+There is NO NEED to specify the op / op.exe executable or the --session --cache switches.
 
 ### Example v1 CLI
 List Vaults
